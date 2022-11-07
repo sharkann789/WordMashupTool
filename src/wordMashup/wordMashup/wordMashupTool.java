@@ -1,3 +1,4 @@
+package wordMashup;
 
 import java.util.ArrayList;
 import java.util.HashSet;
