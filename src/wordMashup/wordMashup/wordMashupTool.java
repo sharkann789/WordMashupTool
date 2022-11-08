@@ -3,16 +3,23 @@ package wordMashup;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+
+/*
+ * WordMashupTool
+ * NOTE! This is a work in progress, so it is pretty messy.
+ * Takes 2+ words and combines them in various ways
+ * Useful for creating usernames.
+ */
+
 public class wordMashupTool{
 
-
+    //one thread per word?
     ArrayList<String> listOfNames;
     HashSet<String> combinations;
     private String strOne;
     private String strTwo;
     private int strOneLen;
     private int strTwoLen;
-    private static int vowelList[] = {'a', 'e', 'i', 'o', 'u'};
 
     // only starts with two names...add more later.
     public wordMashupTool(String one, String two){
@@ -28,88 +35,142 @@ public class wordMashupTool{
         listOfNames = list;
     }
 
-    // function to get flag of all things, put it in a list.
-    // function to combine all possibilies of flags (even @ 0!)
+
+    // A "flag" is a substring of the string form the beginning.
+    // need one for the end lol.
+    private String[] getFlagBegin(String word){
+        // arrays are faster, so we use them here
+        // total amount of possibilites is just the length of the string + 1
+        String[] out = new String[word.length()];
+        int idx = 0;
+        
+        for (int i = 0; i < word.length(); i++){
+            out[i] = word.substring(0, i);
+        }
+        return out;
+    }
+
+    //same thing for end.
+    private String[] getFlagEnd(String word){
+        // arrays are faster, so we use them here
+        // total amount of possibilites is just the length of the string + 1
+        String[] out = new String[word.length()];
+        int idx = 0;
+        
+
+        for (int i = word.length() - 1; i >= 0; i--){
+            String temp = word.substring(i, word.length());
+            out[i] = temp;
+        }
+        return out;
+    }
+
+    private HashSet<String> AllCombs(String init, String[] rest){
+        HashSet<String> out = new HashSet<String>();
+
+        //create arrays of end and start for other words
+        //only start for init.
+        //loop through array of arrays of other words
+        //do init + word + word + ... word (n) in other words, return in the end?
+        //n is size of largest array?
+
+        // new init -> add to colleciton
+        // combine with largeset first
+        // no..tree would be good here right?
+        // split by options, in the end, get all possibilities lol
+        // ^^ worth!
+        // root split is init.
 
 
-    private String[] getBestNames(){
+
+
+        String[] preInit = getFlagBegin(init);
+        String[][] multList = new String[0][0];
+
+
+
+        for (int i = 0; i < rest.length; i++){
+
+        }
+        
+
+
+
+        for (int i = 0; i < preInit.length; i++){
+
+        }
+
+
+
         return null;
     }
 
 
-    // using the math to show off lmao
-    // A "flag" is a substring of the string form the beginning.
-    // need one for the end lol.
-    private String[] getFlagBegin(String word){
-        // find all possible name flag combinations
-        int len = 0;
-        for (int i = 0; i < word.length(); i++){
-            len += i;
-        }
-
-        
-        String[] out = new String[0];
-        
-        
-        return out;
-    }
-
-    // 2,3,4...n combinations. where n is the length of listOfNames
-    private void FindAllCombinationsAux(){
-
-
-
-    }
-
-
-    //For the combinations list
-    private void FindAllCominationsList(){
-        for (int i = 0; i < listOfNames.size(); i++){
-
-        }
-    }
-
-    // all combinations for two names
-    // very simple, the other alg is much harder.
-    private boolean FindCombsTwoNames(){
-        //check if variable length > 1
-        if (strOneLen <= 0 || strTwoLen <= 0){
-            return false;
-        }
-        //variables to keep track of word.
+    // 2 words.
+    private HashSet<String> FindAllCombsTwo(String init, String back){
+        HashSet<String> out = new HashSet<String>();
         String newName;
         String firstnc;
         String secnc;
-        // outer loop
-        for (int i = 1; i < strOneLen; i++){
-            newName = strOne.substring(0,i);
+        int initLen = init.length();
+        int backLen = back.length();
+
+        // outer loop, first word
+        for (int i = 1; i < initLen; i++){
+            newName = init.substring(0,i);
             
             // inner loop
-            for (int j = 1; j < strTwoLen; j++){
-                firstnc = newName + strTwo.substring(0,j);
-                secnc = newName + strTwo.substring(j, strTwoLen);
+            for (int j = 1; j < backLen; j++){
+                firstnc = newName + back.substring(0,j);
+                secnc = newName + back.substring(j, backLen);
                 combinations.add(firstnc);
                 combinations.add(secnc);
             }
         }
         //start with 2nd word
-        for (int i = 1; i < strTwoLen; i++){
-            newName = strTwo.substring(0,i);
-            // innter loop
-            for (int j = 1; j < strOneLen; j++){
-                firstnc = newName + strOne.substring(0,j);
-                secnc = newName + strOne.substring(j, strOneLen);
+        for (int i = 1; i < backLen; i++){
+            newName = back.substring(0,i);
+            // inner loop
+            for (int j = 1; j < initLen; j++){
+                firstnc = newName + init.substring(0,j);
+                secnc = newName + init.substring(j, initLen);
                 combinations.add(firstnc);
                 combinations.add(secnc);
             }
-        }
-        return true;
+        }  
+        return out;
     }
 
 
-    //return all names from combtwo names lol
+    //For the combinations list
+    private void FindAllCominationsList(){
+        // run find all combinations aux for all the words
+        
+        for (int i = 0; i < listOfNames.size(); i++){
+
+        }
+    }
+
+    //return all combinations from 2 words
     public HashSet<String> getAllNames(){
-        FindCombsTwoNames();
+        
+        combinations.addAll(FindAllCombsTwo(strOne, strTwo));
+
+        
+        getFlagEnd(strOne);
+
+        return null;
+    }
+
+    //return all combinations from 2+ words
+    public HashSet<String> getAllNamesPlus(){
+        FindAllCombsTwo(strOne, strTwo);
         return combinations;
+    }
+
+
+    //simple testing 
+    public void TestAll(){
+
     }
 }
